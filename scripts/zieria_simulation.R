@@ -1,4 +1,7 @@
 
+# This script runs the forward simulations given specified outcross and pop sizes supplied by the bash script
+
+
 # # for bash 
 # #!/bin/bash
 # 
