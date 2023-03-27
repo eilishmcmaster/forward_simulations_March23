@@ -44,27 +44,28 @@ for (file_name in 1:length(filenames)){
   load(filenames[file_name])
   
   # loop through each column in Ho
-  for (replicate in 1:length(out_list$Ho)) {
+  Ho_dt <- out_list$Ho
+  He_dt <- out_list$He
+  for (replicate in 1:nrow(Ho_dt)) { # each row is a generation 
     
     # get the row numbers where Ho is between 0.062 and 0.038
-    valid_generations <- which(out_list$Ho[[replicate]] > Ho_group2 & out_list$Ho[[replicate]] < Ho_group1)
+    valid_generations <- which(Ho_dt[replicate,] > Ho_group2 & Ho_dt[replicate,] < Ho_group1)
     
     # check if any valid rows were found
     if (length(valid_generations) > 0) {
       
       # loop through each valid row
-      for (generation in valid_generations) {
+      for (n in seq_along(valid_generations)) {
         
         # get the corresponding value from He
-        He_value <- out_list$He[[replicate]][[generation]]
+        He_value <- He_dt[replicate, valid_generations[n]]
         
         # get the value from out_list$name
-        name <- out_list$name[[replicate]]
+        name <- out_list$name[replicate]
         
         # add the results to the data table
-       # results <- rbind(results, data.table(name = name, replicate = replicate, generation = generation, He_value = He_value))
-      new_row <- data.table(name = name, replicate = replicate, generation = generation, He_value = He_value)
-      results <- rbindlist(list(results, new_row), fill = TRUE)
+        new_row <- data.table(name = name, replicate = replicate, generation = valid_generations[n], He_value = He_value)
+        results <- rbindlist(list(results, new_row), fill = TRUE)
       }
       
     }
@@ -77,4 +78,4 @@ results <- as.data.frame(results)
 results[,c("popsize","outcross")] <- str_split_fixed(results$name,"_",2)
 
 # print the results
-write.csv(results, "Z_data_for_distributions2.csv")
+write.csv(results, "Z_data_for_distributions.csv")
